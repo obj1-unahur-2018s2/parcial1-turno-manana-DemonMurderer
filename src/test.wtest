@@ -1,0 +1,59 @@
+import profesionales.*
+import universidad.*
+import empresas.*
+describe "test etapa 1"{
+	const sanMartin = new Universidad()
+	const rosario = new Universidad()
+	const corrientes = new Universidad()
+	const hurlingham = new Universidad()
+	const juliana = new ProfesionalVinculado()
+	const melina = new ProfesionalAsociado()
+	const rocio = new ProfesionalLibre()
+	const luciana = new ProfesionalLibre()
+	const empresa = new EmpresasDeServicio()
+	fixture {
+		sanMartin.setProvincia("Buenos Aires")
+		rosario.setProvincia("Santa Fe")
+		corrientes.setProvincia("corrientes")
+		hurlingham.setProvincia("Buenos Aires")
+		sanMartin.setHonorarios(3500)
+		rosario.setHonorarios(2800)
+		corrientes.setHonorarios(4200)
+		hurlingham.setHonorarios(8800)
+		juliana.universidad(rosario)
+		melina.universidad(corrientes)
+		rocio.universidad(hurlingham)
+		rocio.addProvincias(#{"Santa Fe", "Cordoba", "Buenos Aires"})
+		luciana.universidad(rosario)
+		luciana.addProvincias(#{"Santa Fe", "Entre Rios"})
+		empresa.contratarEmpleados(#{juliana, melina, rocio, luciana})
+		empresa.setHonorarioDeReferencia(3500)
+		rocio.setHonorarios(5000)
+		luciana.setHonorarios(3200)
+		juliana.cobrado(10000)
+		melina.cobrado(8000)
+		rocio.cobrado(10000)
+	}
+	test "test 1"{
+		assert.equals(#{rocio}, empresa.profesionalesMasCaros())
+		assert.equals(#{rosario, hurlingham, corrientes}, empresa.universidadesFormadoras())
+		assert.equals(juliana, empresa.profesionalMasBarato())
+		assert.equals(2, empresa.profesionalesDeMismaUniversidad(rosario))
+		assert.equals(1, empresa.profesionalesDeMismaUniversidad(corrientes))
+		assert.equals(1, empresa.profesionalesDeMismaUniversidad(hurlingham))
+		assert.equals(0, empresa.profesionalesDeMismaUniversidad(sanMartin))
+		assert.notEquals(#{"Misiones"}, empresa.provinciaEstaCubierta(#{"Santa Fe", "Cordoba", "Misiones"}))
+	}
+	test "test 2"{
+		juliana.donar()
+		assert.equals(5000, rosario.donaciones())
+		assert.equals(5000, juliana.cobrado())
+		melina.donar()
+		assert.equals(0, melina.cobrado())
+		assert.equals(8000, asociacion.donaciones())
+		rocio.pasarDinero(luciana, 10000)
+		assert.equals(0, rocio.cobrado())
+		assert.equals(10000, luciana.cobrado())
+		
+	}
+}
